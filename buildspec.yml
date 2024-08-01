@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20.11.0  # Especificar la versión exacta de Node.js
+  pre_build:
+    commands:
+      - echo Nothing to do in the pre_build phase...
+  build:
+    commands:
+      - echo Build started on `date`
+      - grep  -Fq "congratulations" index.html
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  baseDirectory: .next
+  files:
+     - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
