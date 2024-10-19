@@ -5,7 +5,7 @@ phases:
     commands:
       - echo "Installing Docker and Docker Compose"
       - apt-get update && apt-get install -y docker.io
-      # Usamos comillas dobles y escapamos las comillas internas
+      # Usamos comillas dobles y escapamos las comillas internas correctamente
       - curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -Po '\"tag_name\": \"\K[0-9.]+\"')" -o /usr/local/bin/docker-compose
       - chmod +x /usr/local/bin/docker-compose
       - service docker start
@@ -26,6 +26,7 @@ phases:
       - ssh -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose up -d"
       - echo "Cleaning up SSH key"
       - rm -f /tmp/lightsail-key.pem
+
 artifacts:
   files:
     - '**/*'
