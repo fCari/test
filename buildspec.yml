@@ -8,16 +8,21 @@ phases:
       - yum install -y docker
       - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       - chmod +x /usr/local/bin/docker-compose
-      - service docker start
+      # Usar systemctl para iniciar Docker
+      - systemctl start docker
+      - systemctl enable docker
+
   pre_build:
     commands:
       - echo "Decoding the SSH key from Base64"
       - echo "$LIGHTSAIL_SSH_KEY_BASE64" | base64 --decode > /tmp/lightsail-key.pem
       - chmod 400 /tmp/lightsail-key.pem
+
   build:
     commands:
       - echo "Building Docker images with Docker Compose"
       - docker-compose build
+
   post_build:
     commands:
       - echo "Deploying to Lightsail using Docker Compose"
@@ -30,6 +35,7 @@ phases:
 artifacts:
   files:
     - '**/*'
+
 
 
 
