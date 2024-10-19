@@ -6,10 +6,10 @@ phases:
       - echo "Installing Docker and Docker Compose"
       - yum update -y
       - yum install -y docker
-      - yum install -y glibc-static  # Instalar biblioteca glibc que incluye libcrypt.so.1
+      - yum install -y glibc-static  # Biblioteca para libcrypt.so.1
+      - yum install -y compat-openssl10  # Compatibilidad con libcrypt.so.1
       - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       - chmod +x /usr/local/bin/docker-compose
-      # Iniciar Docker usando el comando dockerd en segundo plano
       - dockerd-entrypoint.sh &
 
   pre_build:
@@ -25,7 +25,8 @@ phases:
 
   post_build:
     commands:
-      - echo "Deploying to Lightsail using Docker Compose"
+      - echo "Ensuring Docker is running"
+      - sudo systemctl start docker || sudo service docker start
       - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem docker-compose.yml ubuntu@52.20.96.245:/home/ubuntu/
       - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose down"
       - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose up -d"
