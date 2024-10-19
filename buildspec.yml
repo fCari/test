@@ -25,7 +25,7 @@ phases:
   post_build:
     commands:
       - echo "Ensuring Docker is running"
-      - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem docker-compose.yml ubuntu@52.20.96.245:/home/ubuntu/
+      - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem docker-compose.yml Dockerfile index.html ubuntu@52.20.96.245:/home/ubuntu/
       - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose down"
       - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose up -d"
       - echo "Cleaning up SSH key"
