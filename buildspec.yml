@@ -5,7 +5,8 @@ phases:
     commands:
       - echo "Installing Docker and Docker Compose"
       - apt-get update && apt-get install -y docker.io
-      - curl -L 'https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -Po \'"tag_name": "\K[0-9.]+")' -o /usr/local/bin/docker-compose
+      # Usamos comillas dobles y escapamos las comillas internas
+      - curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -Po '\"tag_name\": \"\K[0-9.]+\"')" -o /usr/local/bin/docker-compose
       - chmod +x /usr/local/bin/docker-compose
       - service docker start
   pre_build:
@@ -28,6 +29,7 @@ phases:
 artifacts:
   files:
     - '**/*'
+
 
 
 # version: 0.2
