@@ -5,8 +5,8 @@ phases:
     commands:
       - echo "Installing Docker and Docker Compose"
       - apt-get update && apt-get install -y docker.io
-      # Descargar e instalar Docker Compose de manera adecuada
-      - curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -Po '\"tag_name\": \"\K[0-9.]+\"')" -o /usr/local/bin/docker-compose
+      # Usar una URL estática para descargar Docker Compose y evitar problemas de escape
+      - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       - chmod +x /usr/local/bin/docker-compose
       - service docker start
   pre_build:
