@@ -4,10 +4,8 @@ phases:
   install:
     commands:
       - echo "Installing Docker and Docker Compose"
-      - yum update -y
-      - yum install -y docker
-      - yum install -y glibc-static  # Biblioteca para libcrypt.so.1
-      - yum install -y compat-openssl10  # Compatibilidad con libcrypt.so.1
+      - apt-get update -y
+      - apt-get install -y docker.io  # Instalar Docker en Ubuntu
       - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       - chmod +x /usr/local/bin/docker-compose
       - dockerd-entrypoint.sh &
@@ -36,6 +34,7 @@ phases:
 artifacts:
   files:
     - '**/*'
+
 
 
 
