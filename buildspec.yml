@@ -21,12 +21,18 @@ phases:
     commands:
       - echo "Building Docker images with Docker Compose"
       - docker-compose build
+      - echo "Saving the Docker image to a tar file"
+      - docker save -o myapp_image.tar $(docker-compose images -q)
 
   post_build:
     commands:
-      - echo "Ensuring Docker is running"
-      - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem -r * ubuntu@52.20.96.245:/home/ubuntu/
+      - echo "Transferring the Docker image tar to Lightsail instance"
+      - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem myapp_image.tar ubuntu@52.20.96.245:/home/ubuntu/
+      - echo "Loading the Docker image on the Lightsail instance"
+      - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker load -i /home/ubuntu/myapp_image.tar"
+      - echo "Bringing down any existing Docker containers"
       - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose down"
+      - echo "Bringing up the new Docker containers"
       - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose up -d"
       - echo "Cleaning up SSH key"
       - rm -f /tmp/lightsail-key.pem
