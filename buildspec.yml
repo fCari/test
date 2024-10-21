@@ -25,11 +25,11 @@ phases:
   post_build:
     commands:
       - echo "Creating directory in Lightsail if it doesn't exist"
-      - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "mkdir -p /home/ubuntu/public_html"
+      - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@$IP "mkdir -p /home/ubuntu/public_html"
       - echo "Ensuring Docker is running"
-      - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem -r * ubuntu@52.20.96.245:/home/ubuntu/public_html
-      #- ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose down"
-      #- ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@52.20.96.245 "docker-compose up -d"
+      - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem -r * ubuntu@$IP:/home/ubuntu/public_html
+      #- ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@$IP "docker-compose down"
+      #- ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@$IP "docker-compose up -d"
       - echo "Cleaning up SSH key"
       - rm -f /tmp/lightsail-key.pem
 
