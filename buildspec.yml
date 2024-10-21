@@ -3,39 +3,30 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Installing Docker and Docker Compose"
-      - apt-get update -y
-      - apt-get install -y docker.io  # Instalar Docker en Ubuntu
-      - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-      - chmod +x /usr/local/bin/docker-compose
-      - nohup dockerd > /var/log/dockerd.log 2>&1 &
-      - dockerd-entrypoint.sh &
-
-  pre_build:
-    commands:
       - echo "Decoding the SSH key from Base64"
       - echo "$LIGHTSAIL_SSH_KEY_BASE64" | base64 --decode > /tmp/lightsail-key.pem
       - chmod 400 /tmp/lightsail-key.pem
 
-  build:
+  pre_build:
     commands:
-      - echo "Building Docker images with Docker Compose"
-      - docker-compose build
+      - echo "Preparing to copy files to Lightsail"
 
-  post_build:
+  build:
     commands:
       - echo "Creating directory in Lightsail if it doesn't exist"
       - ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@$IP "mkdir -p /home/ubuntu/public_html"
-      - echo "Ensuring Docker is running"
+
+  post_build:
+    commands:
+      - echo "Copying files to Lightsail instance"
       - scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem -r * ubuntu@$IP:/home/ubuntu/public_html
-      #- ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@$IP "docker-compose down"
-      #- ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem ubuntu@$IP "docker-compose up -d"
       - echo "Cleaning up SSH key"
       - rm -f /tmp/lightsail-key.pem
 
 artifacts:
   files:
     - '**/*'
+
 
 
 
